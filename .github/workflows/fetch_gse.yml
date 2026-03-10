@@ -1,0 +1,24 @@
+name: Fetch GSE Data
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Fetch GSE prices
+        run: |
+          curl -s https://dev.kwayisi.org/apis/gse/live > gse_prices.json
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add gse_prices.json
+          git diff --staged --quiet || git commit -m "Update GSE prices"
+          git push
