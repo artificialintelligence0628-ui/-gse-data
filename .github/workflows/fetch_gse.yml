@@ -5,6 +5,9 @@ on:
     - cron: '*/15 * * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   fetch:
     runs-on: ubuntu-latest
@@ -13,7 +16,8 @@ jobs:
 
       - name: Fetch GSE prices
         run: |
-          curl -s https://dev.kwayisi.org/apis/gse/live > gse_prices.json
+          curl -s --max-time 30 https://dev.kwayisi.org/apis/gse/live > gse_prices.json
+          cat gse_prices.json
 
       - name: Commit and push
         run: |
